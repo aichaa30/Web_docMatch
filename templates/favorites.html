@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorite Doctors</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Optional: Custom Styling -->
+    <style>
+        body {
+            background-color: white;
+            font-family: 'Arial', sans-serif;
+            color: rgba(5, 5, 5, 0.67);
+        }
+
+        .card {
+            background-color: #f8d7e3; /* Soft pinkish background for cards */
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-custom {
+            border-radius: 30px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ee7724, #d8363a);
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #dd3675;
+        }
+
+        .list-group-item {
+            background-color: #f8d7e3; /* Matching pinkish tone */
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body class="fade-in">
+<div class="container my-5">
+
+    <h1>Your Favorite Doctors</h1>
+    <!-- Check if there are any favorites -->
+    {% if favorites %}
+    <ul class="list-group">
+        {% for doctor in favorites %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ doctor['first_name'] }} {{ doctor['last_name'] }}</strong><br>
+                <b>Specialty:</b> {{ doctor['specialty'] }}<br>
+                <b>Phone:</b> {{ doctor['telephone'] or 'Phone not available' }}<br>
+                <b>Address:</b> {{ doctor['address'] or 'Address not available' }}, {{ doctor['city'] or 'City not available' }}, {{ doctor['postal_code'] or 'Postal code not available' }}
+            </div>
+            <!-- Remove from favorites button -->
+            <button class="btn btn-custom btn-sm remove-favorite"
+                    data-doctor="{{ doctor['first_name'] }} {{ doctor['last_name'] }}"
+                    data-telephone_number="{{ doctor['telephone'] }}"
+                    data-postal_code="{{ doctor['postal_code'] }}">
+                Remove from Favorites
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="alert alert-info">
+        You have no favorite doctors yet. Start adding some!
+    </div>
+    {% endif %}
+</div>
+<div class="d-flex justify-content-center mt-4">
+    <a href="/dashboard" class="btn btn-custom" style="text-decoration: none;">Go to Dashboard</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Handle remove favorite action
+    $('.remove-favorite').on('click', function() {
+        var doctor_full_name = $(this).data('doctor');
+        var telephone_number = $(this).data('telephone_number');
+        var postal_code = $(this).data('postal_code');
+
+        var $button = $(this);  // Store reference to the clicked button
+
+        $.ajax({
+            url: '/toggle_favorite',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                doctor_full_name: doctor_full_name,
+                telephone_number: telephone_number,
+                postal_code: postal_code,
+                action: 'remove'
+            }),
+            success: function(response) {
+                if (response.success) {
+                    // Remove the doctor from the list without reloading the page
+                    $button.closest('li').remove();  // Use the stored reference
+                } else {
+                    alert('Error removing favorite.');
+                }
+            },
+            error: function() {
+                alert('Error removing favorite.');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - DocMatch</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Color Palette */
+        :root {
+            --primary-color: #2A9D8F;
+            --secondary-color: #264653;
+            --accent-color: #E9C46A;
+            --bg-color: #F4F4F4;
+        }
+
+        body {
+            background-color: #eee;
+        }
+
+        .gradient-custom-2 {
+            background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+        }
+
+        .gradient-form {
+            height: 100vh !important;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            color: black;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.3);
+            color: black;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .footer-link {
+            color: var(--primary-color);
+        }
+
+        .text-muted {
+            font-size: 0.9rem;
+        }
+
+        .form-check-label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<!-- Flash Messages Section -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="container">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Note:</strong> {{ messages[0] }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+{% endif %}
+{% endwith %}
+<!-- Login Section -->
+<section class="h-100 gradient-form">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-xl-10">
+                <div class="card rounded-3 text-black">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="card-body p-md-5 mx-md-4">
+
+                                <div class="text-center">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
+                                         style="width: 185px;" alt="logo">
+                                    <h4 class="mt-1 mb-5 pb-1">DocMatch</h4>
+                                </div>
+
+                                <form method="post">
+                                    <p>Please login to your account</p>
+
+                                    <!-- Email input -->
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="email" id="form2Example11" class="form-control"
+                                               placeholder="Email address" name="email" required />
+                                        <label class="form-label" for="form2Example11">Email Address</label>
+                                    </div>
+
+                                    <!-- Password input -->
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="password" id="form2Example22" class="form-control" name="password" required />
+                                        <label class="form-label" for="form2Example22">Password</label>
+                                    </div>
+
+                                    <div class="text-center pt-1 mb-5 pb-1">
+                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit">Log in</button>
+                                        <a class="text-muted" href="{{ url_for('forgot_password') }}">Forgot password?</a>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-center pb-4">
+                                        <p class="mb-0 me-2">Don't have an account?</p>
+                                        <a href="{{ url_for('register') }}" type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-danger">Create new</a>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                            <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                                <h4 class="mb-4">We are more than just a company</h4>
+                                <p class="small mb-0">DocMatch is a doctor-finding platform that connects you with the best healthcare professionals. We focus on ease and security in your search for the perfect doctor for your needs.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
