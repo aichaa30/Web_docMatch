@@ -5,8 +5,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# URL to fetch the JSON file
 url = "https://npiregistry.cms.hhs.gov/api/?number=&enumeration_type=&taxonomy_description=&name_purpose=&first_name=&use_first_name_alias=&last_name=&organization_name=&address_purpose=&city=Syracuse&state=&postal_code=&country_code=&limit=200&skip=&pretty=on&version=2.1"
 
 try:
@@ -19,12 +19,17 @@ try:
     filtered_data = []
 
     for entry in data.get("results", []):
+        address_info = entry.get("addresses", [{}])[0]
+
         filtered_entry = {
             "authorized_official_first_name": entry.get("basic", {}).get("authorized_official_first_name", "N/A"),
             "authorized_official_last_name": entry.get("basic", {}).get("authorized_official_last_name", "N/A"),
-            "telephone_number": entry.get("addresses", [{}])[0].get("telephone_number", "N/A"),
+            "telephone_number": address_info.get("telephone_number", "N/A"),
             "description": entry.get("taxonomies", [{}])[0].get("desc", "N/A"),
-            "address_1": entry.get("addresses", [{}])[0].get("address_1", "N/A")
+            "address_1": address_info.get("address_1", "N/A"),
+            "city": address_info.get("city", "N/A"),
+            "state": address_info.get("state", "N/A"),
+            "postal_code": address_info.get("postal_code", "N/A")
         }
 
         for key, value in filtered_entry.items():
@@ -36,27 +41,23 @@ try:
         if all(param != "N/A" for param in filtered_entry.values()):
             filtered_data.append(filtered_entry)
 
-    # Connect to the PostgreSQL database
-    conn = psycopg2.connect(
-        dbname="Docdb",
-        user="postgres",
-        password=os.getenv("LOCAL_DB_PASSWORD"),
-        host="localhost",
-        port="5432"
-    )
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     for entry in filtered_data:
         cursor.execute("""
             INSERT INTO public."Doctor" 
-            (authorized_official_first_name, authorized_official_last_name, telephone_number, description, address_1)
-            VALUES (%s, %s, %s, %s, %s)
+            (authorized_official_first_name, authorized_official_last_name, telephone_number, description, address_1, city, state, postal_code)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             entry["authorized_official_first_name"],
             entry["authorized_official_last_name"],
             entry["telephone_number"],
             entry["description"],
-            entry["address_1"]
+            entry["address_1"],
+            entry["city"],
+            entry["state"],
+            entry["postal_code"]
         ))
 
     conn.commit()
