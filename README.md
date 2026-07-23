@@ -4,7 +4,7 @@ A full-stack web application that helps patients find doctors near them who acce
 
 ## Demo
 
-[Watch the demo video(coming soon)](your-video-link-here)
+[Watch the demo video](https://drive.google.com/file/d/1EMU7LAeKJ13R3EP_gPbIv2Lwjl2Oufc0/view?usp=drive_link)
 
 <img width="2866" height="1536" alt="image" src="https://github.com/user-attachments/assets/0f3beeeb-a955-43fd-adb8-c68bb3bd05dc" />
 
